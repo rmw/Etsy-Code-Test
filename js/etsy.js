@@ -14,9 +14,9 @@ var ETSY = ETSY || {}; (function($) {
 				success : function(data) {
 					if(data.ok) {
 						$('#etsy-images').empty();
-						alert(data.count);
 						if(data.count > 0) {
 							console.log(data);
+							//multiple by -1 to reverse the sort (most favorited first)
 							var sorted = _.sortBy(data.results, function(d) { return -1 * d.num_favorers; });
 							var results = _.map(sorted, function(d) {
 								return d.title + ': ' + d.num_favorers + " " + d.price;
