@@ -7,10 +7,20 @@
 		<meta name="author" content="Rebecca Miller-Webster" />
 		<!-- Date: 2012-03-26 -->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+		<script type="text/javascript" src="js/etsy.js"></script>
 		<script type="application/javascript">
 			(function($) {
 
 				$(document).ready(function() {
+					$('#etsy-shop').bind('submit', function(e) {
+						var shop_id = $('#etsy-shop-name').val();
+						$('#etsy-images').empty();
+						$('<p>Analyzing ' + shop_id + '</p>').appendTo('#etsy-images');
+						ETSY.getActiveListings(shop_id);
+						return false;
+					});
+					
 					$('#etsy-search').bind('submit', function() {
 						api_key = "xz9zew66bdm4w6mnd4ht1osp";
 						terms = $('#etsy-terms').val();
@@ -57,5 +67,11 @@
 			</button>
 		</form>
 		<div id="etsy-images"></div>
+		<form id="etsy-shop">
+			<input id="etsy-shop-name" size="32" />
+			<button>
+				Analyze Shop
+			</button>
+		</form>
 	</body>
 </html>
