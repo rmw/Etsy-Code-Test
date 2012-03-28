@@ -4,3 +4,8 @@ Etsy Code Test
 most
 * what the price distribution is within the shop's items
 * correlation between price and favouriting.
+
+todo: chart to show distribution of prices (price vs. num items)
+todo: graph to show relationship between prices and num favs (price vs num favs)
+todo: show top favorited items (5 or 10)
+todo: nice way to choose shop (get front page shops to click on?) - keep search box
