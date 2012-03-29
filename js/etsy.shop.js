@@ -1,17 +1,78 @@
-var ETSY = ETSY || {}; (function($) {
+/*
+ * TODO:
+ *   #1 - analyzer with Backbone event model
+ */
+var ETSY = ETSY || {};
+/*
+ * TODO:
+ * 	var shop = ETSY.Shop('name');
+ *   TODO: getting the results object needs to be a callback b/c of ajax
+ *  var results = shop.ActiveListings
+ * 		.get([ETSY.Analyzer.Listings.topFavs, ETSY.Analyzer.Listings.numInPrices, ETSY.Analyzer.listings.priceOfFavs])
+ * 		.results;
+ * 	(analyzers take the data object)
+ *   if results.complete && results.ok
+ *  	display: results.data.topFavs
+ *  	display: results.data.numInPrices
+ *  	display: results.data.priceOfFavs
+ * 	else if results.data.errors == NO_RESULTS
+ */ 
+(function($) {
+	//TODO: should be constructor that takes shop_id?
 	ETSY.Shop = {
 		id : null,
-		result : {
-			processing : false,
-			processed : false,
-			ok : false,
-			error : true,
-			data : {}
+		result : {},
+		init : function() {
+			//TODO: unbind events
+			ETSY.Shop.result = {
+				processing : false,
+				complete : false,
+				ok : false,
+				error : false,
+				data : {},
+				setOK: function(ok) { ETSY.Shop.result.ok = ok; ETSY.Shop.result.error = !ok; }
+			}
 		},
+		// TODO: turn into ActiveListings : { get : function() ..., events : { GetSuccess : 'get:success' ... }, success, error }
+		// TODO: etsy shop analyzer ... topFavs, numInPrice, priceOfFavs ... binds to events
 		get : function(shop_id) {
 			ETSY.Shop.id = shop_id || ETSY.Shop.id;
+			ETSY.Shop.init();
+			ETSY.Shop.result.processing = true;
+			/* TODO:
+			 * 	- success/error set data
+			 *  - (loop thru data) get data sets (sorted by favs (top items), price count(price distribution), price keys & favs by price (price vs. favs))
+			 * 		- how do? loop + event callback - jquery events? Backbone event model?
+			 * 		- set results.data.orig = data
+			 *  - in document.ready display data 
+			 *  -	- top 5(?) favs with images and links (see etsy jquery example)
+			 * 		- price distribution high chart
+			 * 		- price vs fav high chart
+			 */
+			/*
+			 * success : function(data) {
+			 * 	var result = ETSY.Shop.result;
+			 *  result.setOK(data.ok && data.count > 0);
+			 *  result.data['orig'] = data;
+			 *  if data.count > 0 then set error to NO_RESULTS
+			 *  if data.ok then trigger get:success event on ETSY.Shop object and pass result
+			 *  if data.error then trigger get:error event on ETSY.Shop object and pass result
+			 * 	result.complete = true;
+			 * 	result.processing = false;
+			 *  callback with result
+			 * },
+			 * error: function() {
+			 * 	result.setOK(false);
+			 * trigger get:error event on ETSY.Shop object and pass data
+			 * 	result.complete = true;
+			 * 	result.processing = false;
+			 *  callback with result
+			 * }
+			 */
 			ETSY.api.getActiveListings(ETSY.Shop.id, ETSY.Shop._getSuccess, ETSY.Shop._getError);
-			//ETSY.getActiveListings(ETSY.Shop.id);
+			//TODO: these need to be done in callback
+			ETSY.Shop.result.processing = false;
+			ETSY.Shop.result.complete = true;
 		},
 		_getSuccess : function(data) {
 			if(data.ok) {
@@ -38,23 +99,12 @@ var ETSY = ETSY || {}; (function($) {
 					var price_keys = _.sortBy(_.keys(prices), function(p) {
 						return parseFloat(p);
 					});
-					console.log(price_keys);
-					var table = "<th scope=\"row\">" + ETSY.Shop.id + "</th>";
-					//header
-					var table_header = "<thead><tr><td></td>";
 					var favs = [];
 					for(var i = 0; i < price_keys.length; ++i) {
 						var key = price_keys[i];
-						table_header += "<th scope=\"col\">" + key + "</th>"
-						table += "<td>" + prices[key] + "</td>";
 						favs.push(prices[key]);
 					}
-					table_header += "</tr></thead><tbody><tr>";
-					table = "<table><caption>Price Distribution</caption>" + table_header + table;
-					table += "</tr></tbody></table>"
-					$(table).appendTo('#etsy-images');
 					$('<div id="container" />').appendTo('#etsy-images');
-					//$('table').visualize({type: 'line', width: '420px'});
 					var chart1 = new Highcharts.Chart({
 						chart : {
 							renderTo : 'container',
@@ -80,12 +130,16 @@ var ETSY = ETSY || {}; (function($) {
 					$('<p>No results.</p>').appendTo('#etsy-images');
 				}
 			} else {
-				$('#etsy-images').empty();
+
 				alert(data.error);
 			}
 		},
 		_getError : function(data) {
-			alert('error');
+			$('#etsy-images').empty();
+			if(data && data.error)
+				alert(data.error);
+			else
+				alert('error');
 		}
 	};
 })(jQuery);
