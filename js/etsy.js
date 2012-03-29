@@ -2,11 +2,25 @@
  * @author Rebecca Miller-Webster
  */
 
-var ETSY = ETSY || {};
-(function($) {
+var ETSY = ETSY || {}; (function($) {
 	ETSY = {
 		_api_key : "xz9zew66bdm4w6mnd4ht1osp",
 		_url : "http://openapi.etsy.com/v2/",
+		api : {
+			getActiveListings : function(shop_id, success, error) {
+				var url = ETSY._url + "shops/" + shop_id + "/listings/active.js?api_key=" + ETSY._api_key;
+				$.ajax({
+					url : url,
+					dataType : 'jsonp',
+					success : function(data) {
+						success(data);
+					},
+					error : function(data) {
+						error(data);
+					}
+				});
+			}
+		},
 		getActiveListings : function(shop_id) {
 			var url = ETSY._url + "shops/" + shop_id + "/listings/active.js?api_key=" + ETSY._api_key;
 			$.ajax({
@@ -57,7 +71,7 @@ var ETSY = ETSY || {};
 							var chart1 = new Highcharts.Chart({
 								chart : {
 									renderTo : 'container',
-									type : 'spline'
+									type : 'line'
 								},
 								title : {
 									text : 'Price vs. Favorites'
