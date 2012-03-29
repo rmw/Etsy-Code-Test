@@ -11,29 +11,40 @@
 		<script type="text/javascript" src="js/highcharts.js"></script>
 		<script type="text/javascript" src="js/etsy.js"></script>
 		<script type="text/javascript" src="js/etsy.shop.js"></script>
-		<script type="application/javascript">
-			(function($) {
-
-				$(document).ready(function() {
-					$('#etsy-shop').bind('submit', function(e) {
-						var shop_id = $('#etsy-shop-name').val();
-						$('#etsy-images').empty();
-						$('<p>Analyzing ' + shop_id + '</p>').appendTo('#etsy-images');
-						//ETSY.getActiveListings(shop_id);
-						ETSY.Shop.get(shop_id);
-						return false;
-					});
-				});
-			})(jQuery);
-		</script>
+		<script type="text/javascript" src="js/app.js"></script>
+		<style>
+			a, a:link, a:visited, a:active, a:hover {
+				color: #0192B5;
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			ol li span {
+				margin: 0 10px;
+			}
+			span.fav_heart {
+				background: url("http://www.etsy.com/assets/dist/201203291333036636/images/sprites/icons-master.png") no-repeat scroll -4px -4px transparent;
+				display: inline;
+				float: left;
+				height: 16px;
+				margin: -1px -20px 0 0;
+				width: 20px;
+			}
+			span.favs {
+				font-size: 12px;
+				font-weight: bold;
+			}
+		</style>
 	</head>
 	<body>
 		<form id="etsy-shop">
+			<label>Shop Name: </label>
 			<input id="etsy-shop-name" size="32" />
 			<button>
 				Analyze Shop
 			</button>
 		</form>
-		<div id="etsy-images"></div>
+		<div id="etsy-results"></div>
 	</body>
 </html>
